@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /* IDs
  * 0 = empty space
@@ -51,25 +52,74 @@ public class GameManager : MonoBehaviour
     {
         GameSessionData sessionData;
         
+        // 01
         sessionData = new GameSessionData();
         sessionData.DialogText =
-            "Let's see if you can win this." +
-            "\nRemember, you are the Red King." +
+            "Alright kitty kat! You are going to be my best friend. Let's play a game!" +
+            "\nRemember, you are the Red King. You can only move once." +
             "\nI will be the other pieces.\n" +
-            "Go pieces will eat you if they enclose the king (north/south/east/west)" +
-            "\n Let's play.";
-        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,5,2,6,2\n2,2,2,2,2";
+            "[Go] pieces will eat you if they enclose the King (north/south/east/west)" +
+            "\n Try to escape. Let's play!";
+        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n2,2,2,2,2";
         sessionData.LoseText = "Ah! ... Too bad... for you of course.";
         sessionData.WinText = "Hum! We'll see in the next one.";
         sessions.Add(sessionData);
 
+        // 02
         sessionData = new GameSessionData();
         sessionData.DialogText =
-            "Hi, this is a test 02" +
+            "This time I'm using Rooks; its arrows will attack you horizontally and vertically..." +
+            "\nBut they won't go over other pieces." +
             "\n Let's play.";
-        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n3,4,5,6,2";
-        sessionData.LoseText = "Ah! ... Too bad... for you of course hehe.";
-        sessionData.WinText = "Hum! We'll see in the next one, again.";
+        sessionData.GameConfig = "0,2,2,0,0\n0,2,2,0,0\n1,2,2,0,0\n0,2,2,0,0\n3,0,0,0,0";
+        sessionData.LoseText = "What fun! Let's go again!";
+        sessionData.WinText = "O.K., O.K., next!!";
+        sessions.Add(sessionData);
+
+        // 03
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "What is this?\n A cookie?!!... errr... alright!" +
+            "\nIf you eat it, your King will be able to move once more." +
+            "\nLet's play!";
+        sessionData.GameConfig = "2,2,1,2,2\n2,2,5,2,2\n0,0,2,0,0\n0,0,0,0,0\n0,3,0,3,0";
+        sessionData.LoseText = "Ha ha ha! I win, I win. Wanna go again?";
+        sessionData.WinText = "It was the cookie's fault! Hum!";
+        sessions.Add(sessionData);
+
+        // 04
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "What is this thing?" +
+            "\nAh, whatever... It allows you to ..aahh.. swap places with other near piece! Yes!" +
+            "\nLet's play.";
+        sessionData.GameConfig = "0,0,2,0,0\n2,2,6,2,2\n0,0,1,0,0\n0,0,0,0,0\n0,3,3,3,0";
+        sessionData.LoseText = "Ah! ... Too bad... for you of course hehe. Let's go again!";
+        sessionData.WinText = "Alright, this is the one!";
+        sessions.Add(sessionData);
+
+        // 05
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "Aha!" +
+            "\nThe secretive Bishop. Always lurking around the corners." +
+            "\nBe careful because it attacks you diagonally." +
+            "\nLet's play!";
+        sessionData.GameConfig = "0,0,0,3,0\n4,0,0,0,3\n0,0,1,0,0\n3,0,6,0,4\n0,3,2,0,0";
+        sessionData.LoseText = "Am I good or what! Ha ha!";
+        sessionData.WinText = "Dang it!";
+        sessions.Add(sessionData);
+                
+        // 06
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "I present to you my impenetrable fortress!!" +
+            "\nLet's play.";
+        sessionData.GameConfig = "0,0,3,0,0\n2,6,2,0,2\n3,2,1,2,3\n2,0,2,0,2\n0,0,3,0,0";
+        sessionData.LoseText = "Ha! No one expects my fortress! I'm invincible! I'll let you try again!";
+        sessionData.WinText = "What? Nooo! My fortress!" +
+            "\n..." +
+            "\nSo the Red King scapes... for not for long  HE HE HE!";
         sessions.Add(sessionData);
     }
 
@@ -140,8 +190,15 @@ public class GameManager : MonoBehaviour
     private void PrepareNextGame()
     {
         currentGameSession++;
-        SetCameraState(CameraState.GeneralView);
-        dialogManager.ShowDialog(sessions[currentGameSession].DialogText, StartCurrentGame);
+        if (currentGameSession >= sessions.Count)
+        {
+            SceneManager.LoadScene("Ending");
+        }
+        else
+        {
+            SetCameraState(CameraState.GeneralView);
+            dialogManager.ShowDialog(sessions[currentGameSession].DialogText, StartCurrentGame);
+        }
     }
 
     private void SetCameraState(CameraState state)

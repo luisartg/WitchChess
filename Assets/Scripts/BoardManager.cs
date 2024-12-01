@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BoardManager : MonoBehaviour
 {
@@ -176,8 +177,224 @@ public class BoardManager : MonoBehaviour
 
         // Check if go pieces enclose the king
         win = CheckForGoLose(boardMapData);
+        if (!win.success)
+        {
+            return win;
+        }
 
-        // check if chess pieces can reach the king directly
+        //Check for Rook
+        win = CheckForRookLose(boardMapData);
+        if (!win.success)
+        {
+            return win;
+        }
+
+        //Check for Bishop
+        win = CheckForBishopLose(boardMapData);
+        if (!win.success)
+        {
+            return win;
+        }
+
+        return win;
+    }
+
+    private WinLoseResult CheckForRookLose(BoardMapData boardMapData)
+    {
+        // ID = 3
+        WinLoseResult win = new WinLoseResult();
+        //go up
+        int x, y;
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+
+        y++;
+        while (y <= 4)
+        {
+            if (boardMapData.Map[x, y] == 0)
+            {
+                y++;
+                continue; // empty space, continue search
+            }
+            if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 3)
+            {
+
+                win.success = false;
+                win.message = "Ha! Rook takes the King! Yay!";
+                return win;
+            }
+            y++;
+        }
+
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        y--;
+        while (y >=0)
+        {
+            if (boardMapData.Map[x, y] == 0) { y--; continue; } // empty space, continue search
+            if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 3)
+            {
+
+                win.success = false;
+                win.message = "Ha! Rook takes the King! Yay!";
+                return win;
+            }
+            y--;
+        }
+
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        x++;
+        while (x <= 4)
+        {
+
+            if (boardMapData.Map[x, y] == 0) { x++; continue; } // empty space, continue search
+            if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 3)
+            {
+
+                win.success = false;
+                win.message = "Ha! Rook takes the King! Yay!";
+                return win;
+            }
+            x++;
+        }
+
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        x--;
+        while (x >= 0)
+        {
+
+            if (boardMapData.Map[x, y] == 0) {x--; continue;} // empty space, continue search
+            if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 3)
+            {
+
+                win.success = false;
+                win.message = "Ha! Rook takes the King! Yay!";
+                return win;
+            }
+            x--;
+        }
+
+        win.success = true;
+        win.message = "Mmm you win...";
+
+        return win;
+    }
+
+    private WinLoseResult CheckForBishopLose(BoardMapData boardMapData)
+    {
+        // ID = 3
+        WinLoseResult win = new WinLoseResult();
+        //go up
+        int x, y;
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        
+        //go uphill right
+        y++;
+        x++;
+        while (y <= 4 && x <= 4)
+        {
+            if (boardMapData.Map[x, y] == 0)
+            {
+                y++;
+                x++;
+                continue;// empty space, continue search
+            }
+            if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 4)
+            {
+
+                win.success = false;
+                win.message = "He he he! The Bishop stabs you!";
+                return win;
+            }
+            y++;
+            x++;
+        }
+
+        //go downhill left
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        y--;
+        x--;
+        while (y >= 0 && x >= 0)
+        {
+            if (boardMapData.Map[x, y] == 0) 
+            {
+                y--;
+                x--; 
+                continue; 
+            }// empty space, continue search
+            if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 4)
+            {
+
+                win.success = false;
+                win.message = "He he he! The Bishop stabs you!";
+                return win;
+            }
+            y--;
+            x--;
+        }
+
+        //go uphill left
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        y++;
+        x--;
+        while (y <= 4 && x >= 0)
+        {
+            if (boardMapData.Map[x, y] == 0) 
+            {
+                y++;
+                x--; 
+                continue; 
+            } // empty space, continue search
+            if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 4)
+            {
+
+                win.success = false;
+                win.message = "He he he! The Bishop stabs you!";
+                return win;
+            }
+            y++;
+            x--;
+        }
+
+        //go downhill right
+        x = (int)boardMapData.kingPos.x;
+        y = (int)boardMapData.kingPos.y;
+        y--;
+        x++;
+        while (y >= 0 && x <= 4)
+        {
+            if (boardMapData.Map[x, y] == 0)
+            {
+                y--;
+                x++;
+                continue;
+            } // empty space, continue search
+            if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
+            if (boardMapData.Map[x, y] == 4)
+            {
+
+                win.success = false;
+                win.message = "He he he! The Bishop stabs you!";
+                return win;
+            }
+            y--;
+            x++;
+        }
+
+        win.success = true;
+        win.message = "Mmm you win...";
 
         return win;
     }
