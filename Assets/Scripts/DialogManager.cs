@@ -14,6 +14,11 @@ public class DialogManager : MonoBehaviour
     private string[] currentLines;
     private bool startDisplay = false;
 
+    public delegate void ContinueAfterDialog();
+
+    ContinueAfterDialog currentCallback;
+
+
     private void Start()
     {
         gameManager = FindObjectOfType<GameManager>();
@@ -23,7 +28,7 @@ public class DialogManager : MonoBehaviour
     {
         if (startDisplay)
         {
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 DisplayLine();
             }
@@ -31,8 +36,10 @@ public class DialogManager : MonoBehaviour
         }
     }
 
-    public void ShowDialog(string text)
+    public void ShowDialog(string text, ContinueAfterDialog callback)
     {
+        currentCallback = callback;//we save this to callback when finishin displaying data
+
         currentLines = text.Split("\n");
         currentLineIndex = 0;
         startDisplay = true;
@@ -52,7 +59,8 @@ public class DialogManager : MonoBehaviour
         {
             dialogContainer.SetActive(false);
             startDisplay = false;
-
+            currentCallback();
+            //gameManager.StartCurrentGame();
             //tell game manager to continue game
         }
     }

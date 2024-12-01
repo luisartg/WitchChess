@@ -84,6 +84,12 @@ public class MouseEffects : MonoBehaviour
         }
     }
 
+    public void ForcedUpdatePlayerPos()
+    {
+        currentPlayerPos = boardManager.GetCurrentPlayerPosition();
+        playerPositionNeedsUpdate = false;
+    }
+
     private void MakeSelectionDissappear()
     {
         sectionVisual.SetActive(false);

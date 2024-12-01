@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int playerMovementCounter = 2;
+    public int playerMovementCounter = 1;
     public bool doSwap = false;
 
     public List<GameObject> basicGamePieces = new List<GameObject>();
@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     private int currentGameSession = -1;
 
     private DialogManager dialogManager;
+    public Animator cameraAnimator;
+
+    private bool isCameraCloseUp = false;
 
     private void Start()
     {
@@ -50,9 +53,12 @@ public class GameManager : MonoBehaviour
         
         sessionData = new GameSessionData();
         sessionData.DialogText =
-            "Hi, this is a test 01" +
+            "Let's see if you can win this." +
+            "\nRemember, you are the Red King." +
+            "\nI will be the other pieces.\n" +
+            "Go pieces will eat you if they enclose the king (north/south/east/west)" +
             "\n Let's play.";
-        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n2,2,2,2,2";
+        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,5,2,6,2\n2,2,2,2,2";
         sessionData.LoseText = "Ah! ... Too bad... for you of course.";
         sessionData.WinText = "Hum! We'll see in the next one.";
         sessions.Add(sessionData);
@@ -61,7 +67,7 @@ public class GameManager : MonoBehaviour
         sessionData.DialogText =
             "Hi, this is a test 02" +
             "\n Let's play.";
-        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n2,2,2,2,2";
+        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n3,4,5,6,2";
         sessionData.LoseText = "Ah! ... Too bad... for you of course hehe.";
         sessionData.WinText = "Hum! We'll see in the next one, again.";
         sessions.Add(sessionData);
@@ -69,8 +75,10 @@ public class GameManager : MonoBehaviour
 
     public void GenerateGame()
     {
+        playerMovementCounter = 1;
         int rowIndex = 0;
         string[] gameRows = gameConfig.Split("\n");
+
         foreach (string row in gameRows) 
         {
             string[] gameColumns = row.Split(",");
@@ -109,15 +117,58 @@ public class GameManager : MonoBehaviour
     {
         mouseEffect.SetActiveMouseEffect(false);
 
-        //TEST WIN
+        WinLoseResult result = boardManager.ReviewWinLose();
+        SetCameraState(CameraState.GeneralView);
+        if (result.success)
+        {
+            //WIN SESSION
+            dialogManager.ShowDialog(result.message + "\n" + sessions[currentGameSession].WinText, PrepareNextGame);
+        }
+        else
+        {
+            //LOST SESSION
+            dialogManager.ShowDialog(result.message + "\n"+sessions[currentGameSession].LoseText, RepeatSession);
+        }
+    }
+
+    private void RepeatSession()
+    {
+        currentGameSession--;
         PrepareNextGame();
     }
 
     private void PrepareNextGame()
     {
-        //TODO: MOVE CAMERA TO POSITION 2
         currentGameSession++;
-        dialogManager.ShowDialog(sessions[currentGameSession].DialogText);
+        SetCameraState(CameraState.GeneralView);
+        dialogManager.ShowDialog(sessions[currentGameSession].DialogText, StartCurrentGame);
+    }
+
+    private void SetCameraState(CameraState state)
+    {
+        if (state == CameraState.GeneralView)
+        {
+            if (isCameraCloseUp)
+            {
+                cameraAnimator.SetTrigger("ChangeView");
+                isCameraCloseUp = false;
+            }
+        }
+        else if(state == CameraState.CloseUp)
+        {
+            if (!isCameraCloseUp)
+            {
+                cameraAnimator.SetTrigger("ChangeView");
+                isCameraCloseUp = true;
+            }
+        }
+    }
+
+    public void StartCurrentGame()
+    {
+        SetCameraState(CameraState.CloseUp);
+        gameConfig = sessions[currentGameSession].GameConfig;
+        GenerateGame();
     }
 
     public void AddPlayerMoveCounter()
@@ -129,6 +180,11 @@ public class GameManager : MonoBehaviour
     {
         doSwap = true;
     }
+
+    public void ConsumeSwapEffect()
+    {
+        doSwap = false;
+    }
     
 }
 
@@ -138,4 +194,10 @@ public class GameSessionData
     public string DialogText;
     public string LoseText;
     public string WinText;
+}
+
+public enum CameraState
+{
+    CloseUp,
+    GeneralView
 }

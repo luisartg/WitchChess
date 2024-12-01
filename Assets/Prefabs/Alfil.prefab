@@ -132,7 +132,7 @@ MonoBehaviour:
   IntroductionHeight: 4
   MoveSpeed: 4
   baseY: 0
-  PieceID: 1
+  PieceID: 4
 --- !u!1001 &2901398063016428394
 PrefabInstance:
   m_ObjectHideFlags: 0
