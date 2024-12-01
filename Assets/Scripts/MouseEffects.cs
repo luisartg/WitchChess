@@ -15,11 +15,18 @@ public class MouseEffects : MonoBehaviour
 
     private GameManager gameManager;
 
+    private bool playerPositionNeedsUpdate = true;
+    private Vector2 currentPlayerPos;
+    private BoardManager boardManager;
+
+    private bool mouseEffectActive = true;
+
     // Start is called before the first frame update
     void Start()
     {
         sectionVisual.SetActive(false);
         gameManager = FindFirstObjectByType<GameManager>();
+        boardManager = FindFirstObjectByType<BoardManager>();
     }
 
     // Update is called once per frame
@@ -28,22 +35,36 @@ public class MouseEffects : MonoBehaviour
         
     }
 
+    public void SetActiveMouseEffect(bool isActive)
+    {
+        mouseEffectActive = isActive;
+        if (!isActive)
+        {
+            sectionVisual.SetActive(false);
+        }
+    }
+
     void OnMouseOver()
     {
+        if (!mouseEffectActive)
+        {
+            return;
+        }
+
+        UpdatePlayerPos();
         /*
         Vector3 mousePos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.y);
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
         Debug.Log($"MousePos: {mousePos}");
         Debug.Log($"WorldMousePos: {worldPosition}");
         */
-        Vector2 currentPlayerPosition = new Vector2 (2, 2);
 
         Vector3 prevWP = GetWorldPositionOnLocalPlane();
         Vector3 clampWP = new(Mathf.RoundToInt(prevWP.x),
                               Mathf.RoundToInt(prevWP.y),
                               Mathf.RoundToInt(prevWP.z));
 
-        if (MouseIsInsideConstraints(currentPlayerPosition, clampWP))
+        if (MouseIsInsideConstraints(currentPlayerPos, clampWP))
         {
             sectionVisual.SetActive(true);
             sectionVisual.transform.position = clampWP;
@@ -51,6 +72,15 @@ public class MouseEffects : MonoBehaviour
         else
         {
             MakeSelectionDissappear();
+        }
+    }
+
+    private void UpdatePlayerPos()
+    {
+        if (playerPositionNeedsUpdate)
+        {
+            currentPlayerPos = boardManager.GetCurrentPlayerPosition();
+            playerPositionNeedsUpdate = false;
         }
     }
 
@@ -121,12 +151,19 @@ public class MouseEffects : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (!mouseEffectActive)
+        {
+            return;
+        }
+
         Debug.Log("Click made!");
         if (sectionVisual.activeSelf == true)
         {
             // position is valid
-            gameManager.MovePlayerPieceTo(new Vector2(sectionVisual.transform.position.x, sectionVisual.transform.position.z));
-
+            Vector2 newPos = new Vector2(sectionVisual.transform.position.x, sectionVisual.transform.position.z);
+            gameManager.MovePlayerPieceTo(newPos);
+            currentPlayerPos = newPos;
+            Debug.Log($"New player pos is {newPos}");
         }
     }
 }

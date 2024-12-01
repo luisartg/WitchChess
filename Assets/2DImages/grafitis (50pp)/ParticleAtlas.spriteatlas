@@ -1,0 +1,110 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ParticleAtlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 0
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 0
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 589dfc9dbcc034543aa345859c0a37ea, type: 3}
+    - {fileID: 2800000, guid: 384b9dbc8d8399144be2bd8d8f5af5d2, type: 3}
+    - {fileID: 2800000, guid: c40dfb57848643440a95154badf8694d, type: 3}
+    - {fileID: 2800000, guid: c7bd7b8efe5f9044d8a9f427f68be877, type: 3}
+    - {fileID: 2800000, guid: acad0290464f3eb4d88075ccaafc50bd, type: 3}
+    - {fileID: 2800000, guid: 1a1e46b4be8ffb2408b25fd02aac9474, type: 3}
+    - {fileID: 2800000, guid: 8a7fb9382f4031b419fb35c8ecede5fd, type: 3}
+    - {fileID: 2800000, guid: f983de2c235b30b49b08806f2fdaaa71, type: 3}
+    - {fileID: 2800000, guid: fc3f14f2c66bff346a46b61a83f59184, type: 3}
+    - {fileID: 2800000, guid: 27224672c6fb966469a4a89aa90bd3bc, type: 3}
+    - {fileID: 2800000, guid: a95b8aaece5f2834881a924111e16317, type: 3}
+    - {fileID: 2800000, guid: 8a6e6aa855796a74b8459a1a86f851a1, type: 3}
+    - {fileID: 2800000, guid: dc17bb6fcc85f364892be8b929102cb6, type: 3}
+    - {fileID: 2800000, guid: c7bd7b8efe5f9044d8a9f427f68be877, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - acad0290464f3eb4d88075ccaafc50bd: 21300000
+    - 27224672c6fb966469a4a89aa90bd3bc: 21300000
+    - fc3f14f2c66bff346a46b61a83f59184: 21300000
+    - 1a1e46b4be8ffb2408b25fd02aac9474: 21300000
+    - c40dfb57848643440a95154badf8694d: 21300000
+    - 8a7fb9382f4031b419fb35c8ecede5fd: 21300000
+    - 8a6e6aa855796a74b8459a1a86f851a1: 21300000
+    - f983de2c235b30b49b08806f2fdaaa71: 21300000
+    - 384b9dbc8d8399144be2bd8d8f5af5d2: 21300000
+    - 589dfc9dbcc034543aa345859c0a37ea: 21300000
+    - c7bd7b8efe5f9044d8a9f427f68be877: 21300000
+    - a95b8aaece5f2834881a924111e16317: 21300000
+    - dc17bb6fcc85f364892be8b929102cb6: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: acad0290464f3eb4d88075ccaafc50bd, type: 3}
+  - {fileID: 21300000, guid: 27224672c6fb966469a4a89aa90bd3bc, type: 3}
+  - {fileID: 21300000, guid: fc3f14f2c66bff346a46b61a83f59184, type: 3}
+  - {fileID: 21300000, guid: 1a1e46b4be8ffb2408b25fd02aac9474, type: 3}
+  - {fileID: 21300000, guid: c40dfb57848643440a95154badf8694d, type: 3}
+  - {fileID: 21300000, guid: 8a7fb9382f4031b419fb35c8ecede5fd, type: 3}
+  - {fileID: 21300000, guid: 8a6e6aa855796a74b8459a1a86f851a1, type: 3}
+  - {fileID: 21300000, guid: f983de2c235b30b49b08806f2fdaaa71, type: 3}
+  - {fileID: 21300000, guid: 384b9dbc8d8399144be2bd8d8f5af5d2, type: 3}
+  - {fileID: 21300000, guid: 589dfc9dbcc034543aa345859c0a37ea, type: 3}
+  - {fileID: 21300000, guid: c7bd7b8efe5f9044d8a9f427f68be877, type: 3}
+  - {fileID: 21300000, guid: a95b8aaece5f2834881a924111e16317, type: 3}
+  - {fileID: 21300000, guid: dc17bb6fcc85f364892be8b929102cb6, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - gratifi5
+  - gratifi10
+  - gratifi9
+  - gratifi6
+  - gratifi3
+  - gratifi7
+  - gratifi12
+  - gratifi8
+  - gratifi2
+  - gratifi1
+  - gratifi4
+  - gratifi11
+  - gratifi13
+  m_RenderDataMap: {}
+  m_Tag: ParticleAtlas
+  m_IsVariant: 0

@@ -22,12 +22,49 @@ public class GameManager : MonoBehaviour
     [TextArea]
     public string gameConfig = "";
 
+    private List<GameSessionData> sessions = new List<GameSessionData>();
+
     private BoardManager boardManager;
+
+    private MouseEffects mouseEffect;
+
+    private int currentGameSession = -1;
+
+    private DialogManager dialogManager;
 
     private void Start()
     {
+        mouseEffect = FindObjectOfType<MouseEffects>();
+        mouseEffect.SetActiveMouseEffect(false);
+
+        dialogManager = FindObjectOfType<DialogManager>();
+
         boardManager = FindObjectOfType<BoardManager>();
-        GenerateGame();
+        CreateGameSessions();
+        PrepareNextGame();
+    }
+
+    private void CreateGameSessions()
+    {
+        GameSessionData sessionData;
+        
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "Hi, this is a test 01" +
+            "\n Let's play.";
+        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n2,2,2,2,2";
+        sessionData.LoseText = "Ah! ... Too bad... for you of course.";
+        sessionData.WinText = "Hum! We'll see in the next one.";
+        sessions.Add(sessionData);
+
+        sessionData = new GameSessionData();
+        sessionData.DialogText =
+            "Hi, this is a test 02" +
+            "\n Let's play.";
+        sessionData.GameConfig = "2,2,2,2,2\n2,2,2,2,2\n2,2,1,2,2\n2,0,2,0,2\n2,2,2,2,2";
+        sessionData.LoseText = "Ah! ... Too bad... for you of course hehe.";
+        sessionData.WinText = "Hum! We'll see in the next one, again.";
+        sessions.Add(sessionData);
     }
 
     public void GenerateGame()
@@ -45,6 +82,13 @@ public class GameManager : MonoBehaviour
         }
         Debug.Log($"BoardConfig = {boardSpaces}");
         boardManager.AddPiecesToBoard(boardSpaces, basicGamePieces);
+        StartCoroutine(WaitforGamePiecesSet());
+    }
+
+    private IEnumerator WaitforGamePiecesSet()
+    {
+        yield return new WaitForSeconds(1);
+        mouseEffect.SetActiveMouseEffect(true);
     }
 
     public void MovePlayerPieceTo(Vector2 newPosition)
@@ -54,6 +98,26 @@ public class GameManager : MonoBehaviour
             boardManager.MovePlayerTo(newPosition, doSwap);
             playerMovementCounter--;
         }
+
+        if (playerMovementCounter <= 0)
+        {
+            CheckForWinLoseCondition();
+        }
+    }
+
+    private void CheckForWinLoseCondition()
+    {
+        mouseEffect.SetActiveMouseEffect(false);
+
+        //TEST WIN
+        PrepareNextGame();
+    }
+
+    private void PrepareNextGame()
+    {
+        //TODO: MOVE CAMERA TO POSITION 2
+        currentGameSession++;
+        dialogManager.ShowDialog(sessions[currentGameSession].DialogText);
     }
 
     public void AddPlayerMoveCounter()
@@ -68,6 +132,10 @@ public class GameManager : MonoBehaviour
     
 }
 
-public class PieceData
+public class GameSessionData
 {
+    public string GameConfig;
+    public string DialogText;
+    public string LoseText;
+    public string WinText;
 }

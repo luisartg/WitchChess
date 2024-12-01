@@ -56,6 +56,8 @@ public class BoardManager : MonoBehaviour
                     newPieceData.boardPosition = new Vector2(j, i);
                     piecesOnBoard.Add(newPieceData);
                     newPiece.transform.parent = this.transform;
+
+                    newPiece.GetComponent<BasicGamePiece>().DoIntroduction();
                 }
             }
         }
@@ -95,8 +97,9 @@ public class BoardManager : MonoBehaviour
         if (targetPieceIndex >= 0)
         {
             GamePieceData pieceData = piecesOnBoard[targetPieceIndex];
-            pieceData.PieceObject.transform.parent = null;
-            Destroy(pieceData.PieceObject.gameObject);
+            pieceData.PieceObject.GetComponent<BasicGamePiece>().RemoveThisPiece();
+            //pieceData.PieceObject.transform.parent = null;
+            //Destroy(pieceData.PieceObject.gameObject);
         }
 
         // Move player piece to new position
@@ -130,6 +133,12 @@ public class BoardManager : MonoBehaviour
         }
     }
     */
+
+    public Vector2 GetCurrentPlayerPosition()
+    {
+        int index = FindPlayerPiece();
+        return piecesOnBoard[index].boardPosition;
+    }
 }
 
 public class GamePieceData
