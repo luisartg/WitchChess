@@ -119,13 +119,14 @@ public class GameManager : MonoBehaviour
         sessionData.LoseText = "Ha! No one expects my fortress! I'm invincible! I'll let you try again!";
         sessionData.WinText = "What? Nooo! My fortress!" +
             "\n..." +
-            "\nSo the Red King scapes... for not for long  HE HE HE!";
+            "\nSo the Red King scapes... but not for long HE HE HE!";
         sessions.Add(sessionData);
     }
 
     public void GenerateGame()
     {
         playerMovementCounter = 1;
+        doSwap = false;
         int rowIndex = 0;
         string[] gameRows = gameConfig.Split("\n");
 
@@ -167,7 +168,12 @@ public class GameManager : MonoBehaviour
     {
         mouseEffect.SetActiveMouseEffect(false);
 
-        WinLoseResult result = boardManager.ReviewWinLose();
+        boardManager.ReviewWinLose(ShowCurrentGameEndResults);
+        
+    }
+
+    public void ShowCurrentGameEndResults(WinLoseResult result)
+    {
         SetCameraState(CameraState.GeneralView);
         if (result.success)
         {
@@ -177,7 +183,7 @@ public class GameManager : MonoBehaviour
         else
         {
             //LOST SESSION
-            dialogManager.ShowDialog(result.message + "\n"+sessions[currentGameSession].LoseText, RepeatSession);
+            dialogManager.ShowDialog(result.message + "\n" + sessions[currentGameSession].LoseText, RepeatSession);
         }
     }
 

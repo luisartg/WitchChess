@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 public class BoardManager : MonoBehaviour
 {
     public Vector2 BoardSize = new(5,5);
+    public float pieceMovementSpeed = 4; //units per second
 
     private List<GamePieceData> piecesOnBoard = new List<GamePieceData>();
     private List<GameObject> currentPiecesList;
@@ -15,6 +16,8 @@ public class BoardManager : MonoBehaviour
     private MouseEffects mouseEffects;
 
     private GameManager gameManager;
+
+    public delegate void CallbackAfterMatchEnd(WinLoseResult result);
 
     private void Start()
     {
@@ -169,7 +172,7 @@ public class BoardManager : MonoBehaviour
         return piecesOnBoard[index].boardPosition;
     }
 
-    public WinLoseResult ReviewWinLose()
+    public void ReviewWinLose(CallbackAfterMatchEnd callbackAfterMatchEnd)
     {
         WinLoseResult win;
         //create position map
@@ -179,24 +182,29 @@ public class BoardManager : MonoBehaviour
         win = CheckForGoLose(boardMapData);
         if (!win.success)
         {
-            return win;
-        }
-
-        //Check for Rook
-        win = CheckForRookLose(boardMapData);
-        if (!win.success)
-        {
-            return win;
+            callbackAfterMatchEnd(win);
+            return;
         }
 
         //Check for Bishop
         win = CheckForBishopLose(boardMapData);
         if (!win.success)
         {
-            return win;
+            EatKingByPieceLocatedAt(win.enemyPiecePosition);
+            callbackAfterMatchEnd(win);
+            return;
         }
 
-        return win;
+        //Check for Rook
+        win = CheckForRookLose(boardMapData);
+        if (!win.success)
+        {
+            EatKingByPieceLocatedAt(win.enemyPiecePosition);
+            callbackAfterMatchEnd(win);
+            return;
+        }
+
+        callbackAfterMatchEnd(win);
     }
 
     private WinLoseResult CheckForRookLose(BoardMapData boardMapData)
@@ -220,6 +228,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] == 3)
             {
 
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "Ha! Rook takes the King! Yay!";
                 return win;
@@ -236,7 +245,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 3)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "Ha! Rook takes the King! Yay!";
                 return win;
@@ -254,7 +263,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 3)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "Ha! Rook takes the King! Yay!";
                 return win;
@@ -272,7 +281,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 3) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 3)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "Ha! Rook takes the King! Yay!";
                 return win;
@@ -309,7 +318,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 4)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "He he he! The Bishop stabs you!";
                 return win;
@@ -334,7 +343,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 4)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "He he he! The Bishop stabs you!";
                 return win;
@@ -359,7 +368,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 4)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "He he he! The Bishop stabs you!";
                 return win;
@@ -384,7 +393,7 @@ public class BoardManager : MonoBehaviour
             if (boardMapData.Map[x, y] != 4) break; // not a rook, interrupt search
             if (boardMapData.Map[x, y] == 4)
             {
-
+                win.enemyPiecePosition = new Vector2(x, y);
                 win.success = false;
                 win.message = "He he he! The Bishop stabs you!";
                 return win;
@@ -541,6 +550,85 @@ public class BoardManager : MonoBehaviour
         winLoseResult.message = "Mmm you win...";
         return winLoseResult;
     }
+
+    private void EatKingByPieceLocatedAt(Vector2 enemyPos)
+    {
+        int playerPieceIndex = FindPlayerPiece();
+        int targetPieceIndex = FindPieceLocatedAt(enemyPos);
+
+        GamePieceData enemyPiece = piecesOnBoard[targetPieceIndex];
+        GamePieceData playerPiece = piecesOnBoard[playerPieceIndex];
+
+        StartCoroutine(MovePieceToPlayer(enemyPiece, playerPiece));
+        //move piece from start position to kings place
+        //when piece reaches the king, remove king
+
+        
+
+    }
+
+    private IEnumerator MovePieceToPlayer(GamePieceData enemyPiece, GamePieceData playerPiece)
+    {
+        Vector2 direction = GetDirectionFromAtoB(enemyPiece.boardPosition, playerPiece.boardPosition);
+        direction = direction.normalized;
+        Vector2 startDirection = direction;
+
+        while (IsDirectionSimilar(direction, startDirection))
+        {
+            Vector3 nextPosition = enemyPiece.PieceObject.transform.position;
+            nextPosition.x += startDirection.x * pieceMovementSpeed * Time.deltaTime;
+            nextPosition.z += startDirection.y * pieceMovementSpeed * Time.deltaTime;
+            enemyPiece.PieceObject.transform.position = nextPosition;
+
+            yield return new WaitForEndOfFrame();
+            direction = GetDirectionFromAtoB(
+                new Vector2(
+                    nextPosition.x, 
+                    nextPosition.z), 
+                playerPiece.boardPosition).normalized;
+        }
+
+        //enemy piece reached, remove king
+        if (playerPiece != null)
+        {
+            playerPiece.PieceObject.GetComponent<BasicGamePiece>().RemoveThisPiece();
+        }
+    }
+
+    private Vector2 GetDirectionFromAtoB(Vector2 startPosition, Vector2 endPosition)
+    {
+        return new Vector2(
+            endPosition.x - startPosition.x,
+            endPosition.y - startPosition.y);
+    }
+
+    private bool IsDirectionSimilar(Vector2 nv1, Vector2 nv2, float degreeMargin = 1)
+    {
+        float alphaDegrees = GetArcInDegrees(nv1);
+        float betaDegrees = GetArcInDegrees(nv2);
+        alphaDegrees += 360;
+        betaDegrees += 360;
+        if (alphaDegrees < betaDegrees + degreeMargin && alphaDegrees > betaDegrees - degreeMargin)
+        {
+            //both directions are the same inside the defined range
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private float GetArcInDegrees(Vector2 direction)
+    {
+        float xDegrees = Mathf.Rad2Deg * Mathf.Asin(direction.x);
+        if (direction.y < 0)
+        {
+            xDegrees = 360 - xDegrees;
+        }
+        return xDegrees;
+    }
+
 }
 
 public class GamePieceData
@@ -559,4 +647,5 @@ public class WinLoseResult
 {
     public bool success;
     public string message;
+    public Vector2 enemyPiecePosition;
 }
